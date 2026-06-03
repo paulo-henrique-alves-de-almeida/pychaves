@@ -1,0 +1,14 @@
+[project]
+name = "pychaves"
+version = "0.1.0"
+authors = [
+  { name="Paulo Henrique Alves de Almeida", email="contato.ph.almeida2006@gmail.com" },
+]
+description = "Uma biblioteca feita em referência ao seriado Chaves (originalmente El Chavo del Ocho)."
+readme = "README.md"
+dependencies = [
+    "emoji",
+    "pygame",
+    "simpleeval",
+    "ascii_magic"
+]
