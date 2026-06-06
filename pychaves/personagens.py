@@ -12,6 +12,9 @@ from simpleeval import simple_eval
 
 
 class Morador(ABC):
+    def __init__(self, nome: str) -> None:
+        self.nome = nome
+        
     @abstractmethod
     def _pagar_aluguel(self):
         pass
@@ -26,7 +29,7 @@ class Chaves(Morador):
         alterego (str): Chapolin Colorado.
     '''
     def __init__(self):
-        self.nome = '\033[1;32mChaves:\033[m'
+        super().__init__(nome='\033[1;32mChaves:\033[m')
         self.alterego = '\033[1;31mC\033[1;33mh\033[1;31ma\033[1;33mp\033[1;31mo\033[1;33ml\033[1;31mi\033[1;33mn\033[1;31m:\033[m'
 
     def calc(self, equacao: str) -> str:
@@ -269,7 +272,7 @@ class Madruga(Morador):
         nome (str): Nome do personagem para ser chamado, já com cores características.
     '''
     def __init__(self) -> None:
-        self.nome = '\033[1;34mSeu Madruga:\033[m'
+        super().__init__(nome='\033[1;34mSeu Madruga:\033[m')
 
     def verificar_acao(self, func: Callable) -> Callable:
         '''
@@ -395,7 +398,7 @@ class Quico(Morador):
         nome (str): Nome do personagem para ser chamado, já com cores características.
     '''
     def __init__(self) -> None:
-        self.nome = f'{emojize(':billed_cap:')}\033[1mQuico:\033[m'
+        super().__init__(nome=f'{emojize(':billed_cap:')}\033[1mQuico:\033[m')
 
     def exist(self, variavel=None) -> bool:
         '''
@@ -503,7 +506,7 @@ class Florinda(Morador):
         nome (str): Nome do personagem para ser chamado, já com cores características.
     '''
     def __init__(self) -> None:
-        self.nome = '\033[1;38;2;255;105;180mDona Florinda:\033[m'
+        super().__init__(nome='\033[1;38;2;255;105;180mDona Florinda:\033[m')
     
     def punir_madruga(self, madruga: Madruga) -> None:
         '''
@@ -518,7 +521,7 @@ class Florinda(Morador):
             som.init()
             som.som_pancada()
 
-            conversa(self.nome, 'E da próxima vez ', 1, fluxo=True)
+            conversa(self.nome, 'E da próxima vez, ', 1, fluxo=True)
             conversa('', 'faça isso com a sua vó!', 1)
             del som
             conversa(madruga.nome, '\033[1;31mSaiu da vila.\033[m', 0)
