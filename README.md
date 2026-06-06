@@ -5,14 +5,22 @@ Sempre adorei Chaves, então criar essa biblioteca foi uma experiência muito di
 
 ---
 
-## 💻 Exemplo
-Como utilizar uma função da biblioteca:
+## 💻 Exemplos
 ```python
-from pychaves import Chaves
+from pychaves.personagens import Chaves
 
 chaves = Chaves() # Instancia a classe Chaves para entrar na vila
 print(chaves.calc('1 + 1'))
 # Retorno: "Mas essa é muito fácil, faça uma mais difícil!"
+```
+
+```python
+from pychaves.acoes import CaixaSom
+
+som = CaixaSom()
+som.init()
+som.tocar_musica()
+# Toca uma música aleatória presente no seriado.
 ```
 
 ---
@@ -71,6 +79,28 @@ Veja seus **métodos listados abaixo:**
 
 ### Pópis
 Está presente apenas para guardar o estilo do nome de seu personagem.
+
+---
+
+## Ações
+Outras ações que tem alguma relação com o seriado:
+
+- **citacao_aleatoria:** Retorna um dicionário com uma citação aleatória e seu autor.
+
+- **conversa:** Imprime uma fala de personagem com seu nome.
+- **acao:** Chama `conversa` e formata em negrito para se categorizar como uma ação
+
+### Caixa de Som
+A classe CaixaSom é responsável por toda ação que envolve som.
+Sempre possui apenas uma instância, mesmo que chamada várias vezes.
+- Utiliza a biblioteca `pygame`.
+
+**Métodos:**
+- **init:** Inicia a caixa de som.
+- **tocar_musica:** Toca uma música selecionada por id ou uma aleatória.
+- **pausa_musica:** Pausa a música.
+- **som_risada:** Toca o som de risada característico do seriado.
+- **som_pancada:** Toca um som de pancada. Normalmente utilizado quando algum personagem leva uma pancada.
 
 ---
 

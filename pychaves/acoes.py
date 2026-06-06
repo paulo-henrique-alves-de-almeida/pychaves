@@ -4,17 +4,27 @@ from pathlib import Path
 
 from pygame import mixer
 
+
 class CaixaSom:
     '''
     Classe que contém tudo necessário para tocas as músicas e efeitos sonoros de Chaves.
     Inicie chamando o método init()!
     
     Attributes:
-        musicas (object): Caminho para a pasta onde estão as músicas.
-        efeitos (object): Caminho para a pasta onde estão os efeitos.
-        lista_musicas (list): Lista de todas músicas presentes na pasta de músicas.
-        musica_atual (str): Musica que está tocando nesse momento.
+        musicas (Path): Caminho para a pasta onde estão as músicas.
+        efeitos (Path): Caminho para a pasta onde estão os efeitos.
+        lista_musicas (list[Path]): Lista de todas músicas presentes na pasta de músicas.
+        musica_atual (str | None): Musica que está tocando nesse momento.
     '''
+
+    _instancia = None
+
+    def __new__(cls, *args, **kwargs):
+        if cls._instancia is None:
+            cls._instancia = super().__new__(cls)
+
+        return cls._instancia
+    
     def __init__(self):
         self.musicas = Path(__file__).parent / 'musicas'
         self.efeitos = Path(__file__).parent / 'efeitos'
@@ -24,17 +34,19 @@ class CaixaSom:
         self.musica_atual = None
 
     def init(self):
-        '''Inicia o mixer do pygame para que seja possível tocar músicas e efeitos.'''
+        '''
+        Inicia o mixer do pygame para que seja possível tocar músicas e efeitos.
+        '''
         if not mixer.get_init():
             mixer.init()
 
-    def tocar_musica(self, id_musica: int = None, pausa: float =5) -> None:
+    def tocar_musica(self, id_musica: int | None = None, pausa: float =5) -> None:
         '''
         Toca uma música por id ou aleatória do Seriado Chaves
         
         Args:
-            id_musica: ID de alguma música do Chaves.
-            pausa: Quantos segundos de pausa após a música começar a tocar.
+            id_musica (optional): ID de alguma música do Chaves.
+            pausa (optional): Quantos segundos de pausa após a música começar a tocar.
         
         Returns:
             Retorna uma música presente na playslist de músicas dos Chaves, ou uma conversa entre os moradores se as músicas forem roubadas
@@ -54,7 +66,10 @@ class CaixaSom:
         sleep(pausa)
 
     def _roubaram_musicas(self) -> None:
-        '''Conversa entre os moradores da vila sobre alguém ter roubado as músicas.'''
+        '''
+        Conversa entre os moradores da vila sobre alguém ter roubado as músicas.
+        '''
+
         # definição de personagens
         chiquinha = '\033[1;31mCh\033[1;33mi\033[1;32mqui\033[1;33mn\033[1;31mha:\033[m'
         seu_madruga = '\033[1;34mSeu Madruga:\033[m'
@@ -90,10 +105,11 @@ class CaixaSom:
         mixer.music.stop()
 
     def som_risada(self, pausa: float = 2):
-        '''Chama um efeito sonoro de risada.
+        '''
+        Chama um efeito sonoro de risada.
         
         Args:
-            pausa (float): Quantos segundos de pausa após o efeito começar a tocar.
+            pausa (float, optional): Quantos segundos de pausa após o efeito começar a tocar.
             
         Returns:
             Um som de risada do Chaves.
@@ -103,10 +119,11 @@ class CaixaSom:
         sleep(pausa)
 
     def som_pancada(self, pausa: float = 2):
-        '''Chama um efeito sonoro de pancada.
+        '''
+        Chama um efeito sonoro de pancada.
         
         Args:
-            pausa (float): Quantos segundos de pausa após o efeito começar a tocar.
+            pausa (float, optional): Quantos segundos de pausa após o efeito começar a tocar.
             
         Returns:
             Um som de pancada do Chaves.
@@ -116,8 +133,10 @@ class CaixaSom:
         sleep(pausa)
 
 
-def citacao_aleatoria() -> str:
-    '''Retorna uma citação aleatória do seriado Chaves'''
+def citacao_aleatoria() -> dict[str, str]:
+    '''
+    Retorna uma citação aleatória do seriado Chaves
+    '''
     citacoes = [
                 {'citacao': 'Sabe qual o animal que come com o rabo? Todos, porque eles não podem tirar o rabo para comer.', 'autor': 'Chaves'},
                 {'citacao': 'Pra aprender uma língua estrangeira você tem que primeiro estudar anatomia, porque anatomia estuda o corpo e a língua faz parte dele.', 'autor': 'Seu Madruga'},
@@ -137,12 +156,21 @@ def conversa(personagem: str, fala: str, pausa: float, fluxo: bool =False) -> No
         personagem (str): Nome do personagem.
         fala (str): A fala do personagem.
         pausa (float): Quantos segundos de pausa para leitura da fala do personagem.
-        fluxo (bool): Se a fala é completa, ou apenas uma parte, que será seguida por outra fala do mesmo personagem'''
+        fluxo (bool): Se a fala é completa, ou apenas uma parte, que será seguida por outra fala do mesmo personagem
+    '''
     end = '' if fluxo else '\n'
 
     print(f'{(personagem + ' ') if personagem else personagem}{fala}{' ' if fluxo else ''}', end=end, flush=fluxo)
     sleep(pausa)
 
-
 def acao(personagem: str, acao: str, pausa: float, fluxo: bool =False) -> None:
+    '''
+    Imprime a ação de algum personagem em negrito.
+
+    Args:
+        personagem (str): Nome do personagem.
+        acao (str): A ação do personagem.
+        pausa (float): Quantos segundos de pausa para leitura da fala do personagem.
+        fluxo (bool): Se a fala é completa, ou apenas uma parte, que será seguida por outra fala do mesmo personagem
+    '''
     conversa(personagem, f'\033[1m{acao}\033[m', pausa, fluxo)
