@@ -5,13 +5,19 @@ from random import choice, randint
 from time import sleep
 from typing import Callable
 from functools import wraps
+from abc import ABC, abstractmethod
 
 from emoji import emojize
 from simpleeval import simple_eval
 
 
+class Morador(ABC):
+    @abstractmethod
+    def _pagar_aluguel(self):
+        pass
 
-class Chaves:
+
+class Chaves(Morador):
     '''
     Faz ações ligadas ao personagem Chaves.
     
@@ -45,7 +51,7 @@ class Chaves:
         
         return f'{self.nome} Mas essa é muito fácil, faça outra mais difícil!'
 
-    def eh_privado(self, variavel: str) -> bool | dict[str, bool]:
+    def eh_privado(self, variavel: str) -> bool | dict[str, str | bool]:
         '''
         Checa se uma variável é privada.
 
@@ -238,7 +244,7 @@ class Chaves:
         conversa('', 'Bem, eu vou lhe dar 6.', 1.5)
         conversa(self.nome, 'Por quê?! Pela exatização, o senhor deveria me dar 10!', 0)
 
-    def _pagar_aluguel(self) -> tuple[bool, CaixaSom]:
+    def _pagar_aluguel(self) -> bool:
         '''
         Tenta pagar o aluguel, mas não tem dinheiro... mas algo acontece
         
@@ -252,10 +258,10 @@ class Chaves:
 
         conversa(self.nome, f'Tá bom, mas não se irrite! {emojize(':pensive_face:')}', 1)
 
-        return (False, som)
+        return False
 
 
-class Madruga:
+class Madruga(Morador):
     '''
     Faz ações ligadas ao personagem Seu Madruga.
     
@@ -331,6 +337,7 @@ class Madruga:
         Returns:
             Depois do tapa, consequências podem acontecer.
         '''
+
         # dá a pancada
         som = CaixaSom()
         som.init()
@@ -358,7 +365,7 @@ class Madruga:
 
             del morador
     
-    def _pagar_aluguel(self) -> tuple[bool, None]:
+    def _pagar_aluguel(self) -> bool:
         '''
         Resiste ou aceita pagar os 14 meses de aluguel atrasados.
         
@@ -371,14 +378,16 @@ class Madruga:
         match chance:
             case 1:
                 conversa(self.nome, 'Que que foi, que que foi, que que há?!', 0)
-                return (False, None)
+                return False
 
             case 2:
                 conversa(self.nome, 'Devemos perdoar as ofensas, devemos perdoar as afrontas. Devemos perdoar os aluguéis atrasados.', 0)
-                return (True, None)
+                return True
+        
+        return True
 
 
-class Quico:
+class Quico(Morador):
     '''
     Faz ações ligadas ao personagem Quico.
     
@@ -467,111 +476,26 @@ class Quico:
         som.som_risada()
         del som
 
-    def _pagar_aluguel(self, mae: Florinda, popis: Popis) -> tuple[bool, None]:
+    def _pagar_aluguel(self, mae: Florinda, popis: Popis) -> bool:
         '''
         Chama sua mãe para pagar o aluguel.
+
+        Args:
+            mae (Florinda): Instância da classe Florinda, sua mãe.
+            popis (Popis): Instância da classe Popis
         
         Returns:
             True
         '''
         sleep(1)
-        conversa(self.nome, 'Você não vai com a minha cara?!', '')
+        conversa(self.nome, 'Você não vai com a minha cara?!', 0)
         conversa(popis.nome, 'Conta tudo pra sua mãe, Quico!', 1)
         mae._pagar_aluguel()
 
-        return (True, None)
+        return True
 
 
-class Barriga:
-    '''
-    Faz ações ligadas ao personagem Seu Barriga.
-    
-    Attributes:
-        nome (str): Nome do personagem para ser chamado, já com cores características.
-    '''
-    def __init__(self) -> None:
-        self.nome = '\033[1;38;2;139;69;19mSeu Barriga:\033[m'
-
-    def responder(self, pergunta: str, resposta: str) -> None:
-        '''
-        Imprime uma pergunta e uma resposta.
-        
-        Args:
-            pergunta (str): Uma pergunta.
-            resposta (str): Uma resposta. Não recomendado responder com outra pergunta.
-        '''
-        print(f'Pergunta: {pergunta}')
-        sleep(1)
-        print(f'Resposta: {resposta}')
-
-        if '?' in resposta:
-            sleep(1)
-            conversa(self.nome, 'Apenas um idiota responde uma pergunta com outra pergunta.', 0)
-    
-    def cobrar_aluguel(self, morador: Madruga | Quico | Florinda | Chaves) -> None:
-        '''
-        Usa seu poder para cobrar o aluguel dos moradores.
-        
-        Args:
-            morador: instância da classe do morador da vila.
-        
-        Returns:
-            Deleta usuários que não podem pagar o aluguel.
-        '''
-        conversa(self.nome, 'Pague o aluguel!', 1)
-
-        if type(morador).__name__ not in ['Madruga', 'Quico', 'Florinda', 'Chaves']:
-            conversa(f'\033[1m{morador.nome if hasattr(morador, 'nome') else type(morador)}:\033[m', '...', 0)
-            return
-        
-        morador_pagar_aluguel = morador._pagar_aluguel()
-        if not morador_pagar_aluguel[0]:
-            if type(morador).__name__ == 'Chaves':
-                conversa(morador.nome, '\033[1;31mS', 0.5, fluxo=True)
-                conversa('', 'a', 0.5, fluxo=True)
-                conversa('', 'i', 0.5, fluxo=True)
-                conversa('', 'u', 0.5, fluxo=True)
-                conversa('', ' ', 0.2, fluxo=True)
-                conversa('', 'd', 0.5, fluxo=True)
-                conversa('', 'a', 0.5, fluxo=True)
-                conversa('', ' ', 0.2, fluxo=True)
-                conversa('', 'v', 0.5, fluxo=True)
-                conversa('', 'i', 0.5, fluxo=True)
-                conversa('', 'l', 0.5, fluxo=True)
-                conversa('', 'a', 0.5, fluxo=True)
-                conversa('', '.', 1, fluxo=True)
-                conversa('', '.', 1, fluxo=True)
-                conversa('', '.\033[m', 1)
-                conversa(self.nome, 'Chaves, ', 1, fluxo=True)
-                conversa('', 'Pode voltar...', 2)
-                morador_pagar_aluguel[1].pausar_musica()
-                conversa(morador.nome, 'Ju- ju- ju- ju- jura? E zás-', 0)
-            else:
-                conversa(morador.nome, '\033[1;31msaiu da vila...\033[m', 0)
-                del morador
-
-
-class Girafales:
-    '''
-    Faz ações ligadas ao personagem Professor Girafales.
-
-     Attributes:
-        nome (str): Nome do personagem para ser chamado, já com cores características.
-    '''
-    def __init__(self) -> None:
-        self.nome = ('\033[1;33mProfessor Girafales:\033[m')
-    
-    def tatatata(self) -> None:
-        '''
-        Demonstra sua raiva de forma característica.
-        '''
-        conversa(self.nome, '', 0, fluxo=True)
-        for _ in range(0, 5):
-            conversa('', 'TÁ!', 0.7, fluxo=True)
-        print()
-
-
-class Florinda:
+class Florinda(Morador):
     '''
     Faz ações ligada à personagem Dona Florinda.
 
@@ -600,7 +524,7 @@ class Florinda:
             conversa(madruga.nome, '\033[1;31mSaiu da vila.\033[m', 0)
             del madruga
     
-    def _pagar_aluguel(self) -> tuple[bool, None]:
+    def _pagar_aluguel(self) -> bool:
         '''
         Paga o Aluguel
         
@@ -609,7 +533,100 @@ class Florinda:
         '''
         acao(self.nome, 'Paga o aluguel.', 0)
 
-        return (True, None)
+        return True
+
+
+class Barriga:
+    '''
+    Faz ações ligadas ao personagem Seu Barriga.
+    
+    Attributes:
+        nome (str): Nome do personagem para ser chamado, já com cores características.
+    '''
+    def __init__(self) -> None:
+        self.nome = '\033[1;38;2;139;69;19mSeu Barriga:\033[m'
+
+    def responder(self, pergunta: str, resposta: str) -> None:
+        '''
+        Imprime uma pergunta e uma resposta.
+        
+        Args:
+            pergunta (str): Uma pergunta.
+            resposta (str): Uma resposta. Não recomendado responder com outra pergunta.
+        '''
+        print(f'Pergunta: {pergunta}')
+        sleep(1)
+        print(f'Resposta: {resposta}')
+
+        if '?' in resposta:
+            sleep(1)
+            conversa(self.nome, 'Apenas um idiota responde uma pergunta com outra pergunta.', 0)
+    
+    def cobrar_aluguel(self, morador: Morador) -> None:
+        '''
+        Usa seu poder para cobrar o aluguel dos moradores.
+        
+        Args:
+            morador: instância da classe do morador da vila.
+        
+        Returns:
+            Deleta usuários que não podem pagar o aluguel.
+        '''
+        conversa(self.nome, 'Pague o aluguel!', 1)
+
+        if type(morador).__name__ not in ['Madruga', 'Quico', 'Florinda', 'Chaves']:
+            conversa(f'\033[1m{morador.nome if hasattr(morador, 'nome') else type(morador)}:\033[m', '...', 0)
+            return
+        
+        morador_pagar_aluguel = morador._pagar_aluguel()
+        if not morador_pagar_aluguel:
+            if type(morador).__name__ == 'Chaves':
+                conversa(morador.nome, '\033[1;31mS', 0.5, fluxo=True)
+                conversa('', 'a', 0.5, fluxo=True)
+                conversa('', 'i', 0.5, fluxo=True)
+                conversa('', 'u', 0.5, fluxo=True)
+                conversa('', ' ', 0.2, fluxo=True)
+                conversa('', 'd', 0.5, fluxo=True)
+                conversa('', 'a', 0.5, fluxo=True)
+                conversa('', ' ', 0.2, fluxo=True)
+                conversa('', 'v', 0.5, fluxo=True)
+                conversa('', 'i', 0.5, fluxo=True)
+                conversa('', 'l', 0.5, fluxo=True)
+                conversa('', 'a', 0.5, fluxo=True)
+                conversa('', '.', 1, fluxo=True)
+                conversa('', '.', 1, fluxo=True)
+                conversa('', '.\033[m', 1)
+                conversa(self.nome, 'Chaves, ', 1, fluxo=True)
+                conversa('', 'Pode voltar...', 2)
+                
+                som = CaixaSom()
+                som.pausar_musica()
+                del som
+
+                conversa(morador.nome, 'Ju- ju- ju- ju- jura? E zás-', 0)
+            else:
+                conversa(morador.nome, '\033[1;31msaiu da vila...\033[m', 0)
+                del morador
+
+
+class Girafales:
+    '''
+    Faz ações ligadas ao personagem Professor Girafales.
+
+     Attributes:
+        nome (str): Nome do personagem para ser chamado, já com cores características.
+    '''
+    def __init__(self) -> None:
+        self.nome = ('\033[1;33mProfessor Girafales:\033[m')
+    
+    def tatatata(self) -> None:
+        '''
+        Demonstra sua raiva de forma característica.
+        '''
+        conversa(self.nome, '', 0, fluxo=True)
+        for _ in range(0, 5):
+            conversa('', 'TÁ!', 0.7, fluxo=True)
+        print()
 
 
 class Popis:
@@ -632,5 +649,3 @@ if __name__ == '__main__':
     girafales = Girafales()
     dona_florinda = Florinda()
     popis = Popis()
-
-    chaves.falar('Não sei')
