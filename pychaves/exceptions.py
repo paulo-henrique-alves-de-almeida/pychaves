@@ -3,8 +3,8 @@ Exeções customizadas com citações do Seriado Chaves.
 
 Chame inicializar() para ativar.
 '''
-
 import sys
+
 
 class CustomExceptions:
     '''Customização de exceções com citações do seriado Chaves'''
@@ -46,7 +46,7 @@ class CustomExceptions:
             'UnicodeTranslateError': f'{self.personagens['madruga']} Que que foi, que que foi, que que há?!'
         }
 
-    def hook(self, exctype, value, traceback):
+    def hook(self, exctype, value):
         name = exctype.__name__
         msg = self.traducoes.get(name, f"Erro: {value}")
         
@@ -57,23 +57,32 @@ def inicializar():
     sys.excepthook = handler.hook
 
 
-class AiQueBurroException(Exception):
-    '''Lançado quando alguma burrice acontece.'''
+class ChavesException(Exception):
+    '''Classe base para Exceptions de Chaves'''
     pass
 
-class NinguemTemPacienciaException(Exception):
-    '''Lançado quando alguma ação demora muito.'''
 
-class FilmePeleException(Exception):
-    '''Lançado quando era melhor ter ido ver o filme do Pelé.'''
+class AiQueBurroException(ChavesException):
+    '''Para quando alguma burrice acontece.'''
     pass
 
-class SemQuererQuerendo(Exception):
-    '''Lançada quando algo acontece sem querer.'''
+
+class NinguemTemPacienciaException(ChavesException):
+    '''Para quando alguma ação demora muito.'''
+
+
+class FilmePeleException(ChavesException):
+    '''Para quando era melhor ter ido ver o filme do Pelé.'''
     pass
 
-class NaoDeu(Exception):
-    '''Lançada quando Quico tenta fazer alguma graça, mas não funciona.'''
+
+class SemQuererQuerendo(ChavesException):
+    '''Para quando algo acontece sem querer.'''
+    pass
+
+
+class NaoDeu(ChavesException):
+    '''Para quando algo não funciona.'''
     pass
 
 

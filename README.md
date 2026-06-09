@@ -104,6 +104,27 @@ Sempre possui apenas uma instância, mesmo que chamada várias vezes.
 
 ---
 
+## Exceptions
+A biblioteca possui Exceptions customizadas. Inclusive, sobrescrevendo algumas que já existem.
+
+Para ativar as exceptions personalizadas que sobrescrevem as exceptions comuns, utilze o seguinte código:
+
+```python
+from pychaves.exceptions import inicializar
+
+inicializar()
+```
+
+Além disso, existem outras Exceptions que podem ser usadas:
+
+**AiQueBurroException:** Para quando algo burro acontece.
+**NinguemTemPacienciaException:** Para quando alguma ação demora muito.
+**FilmePeleException:** Para quando era melhor ter ido ver o filme do Pelé.
+**SemQuererQuerendo:** Para quando algo acontece sem querer.
+**NaoDeu:** Para quando algo não funciona.
+
+---
+
 ## 📜 Depedências
 Ao instalar a biblioteca, também é preciso instalar as seguintes bibliotecas para total funcionamento (essas são instaladas automaticamente com `pip` ao instalar a biblioteca):
 
